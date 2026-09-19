@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>WebAR Sample</title>
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ar-js-org/ar.js@3.4.7/aframe/build/aframe-ar.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; }
+    .guide { position: fixed; z-index: 10; top: 12px; left: 12px; right: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.9); text-align: center; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="guide">カメラを Hiro マーカーに向けてください</div>
+
+  <a-scene embedded vr-mode-ui="enabled: false" renderer="antialias: true; alpha: true" arjs="sourceType: webcam; debugUIEnabled: false;">
+    <a-marker preset="hiro">
+      <a-box position="0 0.5 0" rotation="0 45 0" color="#FFB74D"
+             animation="property: rotation; to: 0 405 0; loop: true; dur: 5000"></a-box>
+      <a-text value="Hello WebAR!" position="0 1.4 0" align="center" color="#222" rotation="-90 0 0"></a-text>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+</body>
+</html>
