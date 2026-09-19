@@ -70,8 +70,8 @@
 
 <body>
 
-    <model-viewer src="./models/Duck.glb" ios-src="./models/glove_baseball_mtl_variant.usdz" alt="3D Duck" ar
-        ar-modes="webxr scene-viewer quick-look" camera-controls auto-rotate shadow-intensity="1"
+    <model-viewer id="viewer" src="./models/Duck.glb" ios-src="./models/glove_baseball_mtl_variant.usdz" alt="3D Duck"
+        ar ar-modes="webxr scene-viewer quick-look" camera-controls auto-rotate shadow-intensity="1"
         interaction-prompt="auto">
 
         <button slot="ar-button" class="ar-button">
@@ -80,44 +80,29 @@
 
     </model-viewer>
 
-    <!-- ナレーション -->
-    <audio id="narration">
-        <source src="./audios/duck.mp3" type="audio/mpeg">
-    </audio>
-
-    <button id="audioButton" class="audio-button">
-        🔊 ナレーションを再生
-    </button>
-
     <script>
-        const audio = document.getElementById("narration");
-        const button = document.getElementById("audioButton");
+        const viewer = document.getElementById("viewer");
+        const narration = document.getElementById("narration");
+        const arButton = document.getElementById("arButton");
 
-        button.addEventListener("click", () => {
-
-            if (audio.paused) {
-
-                audio.play();
-
-                button.textContent =
-                    "⏸ ナレーションを停止";
-
-            } else {
-
-                audio.pause();
-
-                button.textContent =
-                    "🔊 ナレーションを再生";
-
+        // ARボタンを押した瞬間にナレーション開始
+        arButton.addEventListener("click", async () => {
+            try {
+                narration.currentTime = 0;
+                await narration.play();
+            } catch (error) {
+                console.error("音声を再生できませんでした", error);
             }
-
         });
 
-        audio.addEventListener("ended", () => {
+        // ARを終了したら音声も停止
+        viewer.addEventListener("ar-status", (event) => {
+            console.log("AR status:", event.detail.status);
 
-            button.textContent =
-                "🔊 ナレーションを再生";
-
+            if (event.detail.status === "not-presenting") {
+                narration.pause();
+                narration.currentTime = 0;
+            }
         });
     </script>
 
