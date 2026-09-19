@@ -1,26 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>WebAR Sample</title>
-  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@ar-js-org/ar.js@3.4.7/aframe/build/aframe-ar.js"></script>
-  <style>
-    body { margin: 0; overflow: hidden; font-family: system-ui, sans-serif; }
-    .guide { position: fixed; z-index: 10; top: 12px; left: 12px; right: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.9); text-align: center; font-size: 16px; }
-  </style>
-</head>
-<body>
-  <div class="guide">カメラを Hiro マーカーに向けてください</div>
 
-  <a-scene embedded vr-mode-ui="enabled: false" renderer="antialias: true; alpha: true" arjs="sourceType: webcam; debugUIEnabled: false;">
-    <a-marker preset="hiro">
-      <a-box position="0 0.5 0" rotation="0 45 0" color="#FFB74D"
-             animation="property: rotation; to: 0 405 0; loop: true; dur: 5000"></a-box>
-      <a-text value="Hello WebAR!" position="0 1.4 0" align="center" color="#222" rotation="-90 0 0"></a-text>
-    </a-marker>
-    <a-entity camera></a-entity>
-  </a-scene>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>WebAR Test</title>
+
+    <!-- A-Frame -->
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #camera {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- スマホのカメラ映像 -->
+    <video id="camera" autoplay playsinline muted></video>
+
+    <!-- 3D -->
+    <a-scene embedded vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false"
+        background="transparent: true">
+
+        <a-assets>
+            <a-asset-item id="duck" src="./models/Duck.glb">
+            </a-asset-item>
+        </a-assets>
+
+        <!-- ライト -->
+        <a-light type="ambient" intensity="1.5">
+        </a-light>
+
+        <a-light type="directional" intensity="1" position="1 2 1">
+        </a-light>
+
+        <!-- Duck -->
+        <a-entity gltf-model="#duck" position="0 -0.5 -3" rotation="0 180 0" scale="0.01 0.01 0.01">
+        </a-entity>
+
+        <!-- カメラ -->
+        <a-camera position="0 0 0" look-controls="enabled: false">
+        </a-camera>
+
+    </a-scene>
+
+
+    <script>
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    },
+                    audio: false
+                });
+
+                const video = document.getElementById("camera");
+                video.srcObject = stream;
+
+            } catch (error) {
+                console.error("Camera error:", error);
+                alert("カメラを起動できませんでした。");
+            }
+        }
+
+        startCamera();
+    </script>
+
 </body>
+
 </html>
