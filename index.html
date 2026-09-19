@@ -43,28 +43,6 @@
 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-
-        .audio-button {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-
-            z-index: 100;
-
-            padding: 14px 24px;
-
-            background: #222;
-            color: white;
-
-            border: none;
-            border-radius: 30px;
-
-            font-size: 16px;
-            font-weight: bold;
-
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
     </style>
 </head>
 
@@ -74,36 +52,62 @@
         ar ar-modes="webxr scene-viewer quick-look" camera-controls auto-rotate shadow-intensity="1"
         interaction-prompt="auto">
 
-        <button slot="ar-button" class="ar-button">
+        <button id="arButton" slot="ar-button" class="ar-button">
             🦆 ARで見る
         </button>
 
     </model-viewer>
 
+
+    <!-- ナレーション -->
+    <audio id="narration" src="./audios/duck.mp3" preload="auto">
+    </audio>
+
+
     <script>
-        const viewer = document.getElementById("viewer");
-        const narration = document.getElementById("narration");
-        const arButton = document.getElementById("arButton");
+        const viewer =
+            document.getElementById("viewer");
 
-        // ARボタンを押した瞬間にナレーション開始
-        arButton.addEventListener("click", async () => {
-            try {
-                narration.currentTime = 0;
-                await narration.play();
-            } catch (error) {
-                console.error("音声を再生できませんでした", error);
-            }
+        const narration =
+            document.getElementById("narration");
+
+        const arButton =
+            document.getElementById("arButton");
+
+
+        // ARボタンを押したら音声再生
+        arButton.addEventListener("click", () => {
+
+            console.log("ARボタン押下");
+
+            narration.currentTime = 0;
+
+            narration.play()
+                .then(() => {
+                    console.log("ナレーション再生開始");
+                })
+                .catch((error) => {
+                    console.error(
+                        "音声再生エラー:",
+                        error
+                    );
+                });
+
         });
 
-        // ARを終了したら音声も停止
-        viewer.addEventListener("ar-status", (event) => {
-            console.log("AR status:", event.detail.status);
 
-            if (event.detail.status === "not-presenting") {
-                narration.pause();
-                narration.currentTime = 0;
+        // AR状態確認
+        viewer.addEventListener(
+            "ar-status",
+            (event) => {
+
+                console.log(
+                    "AR status:",
+                    event.detail.status
+                );
+
             }
-        });
+        );
     </script>
 
 </body>
